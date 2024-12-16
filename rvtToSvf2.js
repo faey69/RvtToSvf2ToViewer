@@ -7,7 +7,6 @@ const minutesExpiration = 60; // The expiration time in minutes for the URL
 let urlSafeBase64EncodedUrn;
 let accessToken;
 
-// Function to Get Access Token
 async function getAccessToken() {
   console.log("Getting access token...");
   const url = "https://developer.api.autodesk.com/authentication/v2/token";
@@ -39,7 +38,6 @@ async function getAccessToken() {
   }
 }
 
-// Function to Create a Bucket
 async function createBucket(accessToken) {
   if (!accessToken) {
     console.error("Access token not obtained, cannot create bucket");
@@ -130,7 +128,6 @@ async function uploadFileToSignedUrl(signedUrl, file) {
   }
 }
 
-// Function to Finalize the Upload
 async function finalizeUpload(accessToken, uploadKey) {
   const uriEncodedObjectKey = encodeURIComponent(objectKey); // URL-encode objectKey here
   const url = `https://developer.api.autodesk.com/oss/v2/buckets/${bucketKey}/objects/${uriEncodedObjectKey}/signeds3upload`;
@@ -139,7 +136,7 @@ async function finalizeUpload(accessToken, uploadKey) {
     ossbucketKey: bucketKey,
     ossSourceFileObjectKey: objectKey,
     access: "full", // Or the required level of access
-    uploadKey: uploadKey, // Use the uploadKey returned from the previous step
+    uploadKey: uploadKey,
   };
 
   try {
@@ -226,7 +223,7 @@ function urlSafeBase64Encode(str) {
 document
   .getElementById("fileInput")
   .addEventListener("change", async (event) => {
-    const file = event.target.files[0]; // Get the selected file
+    const file = event.target.files[0];
 
     if (file) {
       console.log("Selected file:", file);
@@ -236,7 +233,6 @@ document
       (async () => {
         // Wait for Access Token
         while (!accessToken) {
-          // Wait for 500ms if accessToken is still null
           await new Promise((resolve) => setTimeout(resolve, 500));
         }
 
@@ -253,7 +249,6 @@ document
           const { uploadKey, urls } = signedUploadUrlData;
           const signedUrl = urls && urls[0]; // Assuming the response contains a list of URLs
 
-          // Log for debugging
           console.log("Signed URL:", signedUrl);
           console.log("Upload Key:", uploadKey);
 
@@ -264,7 +259,6 @@ document
             // Finalize the upload using the uploadKey
             const rawUrn = await finalizeUpload(accessToken, uploadKey);
 
-            // Proceed with the next steps
             urlSafeBase64EncodedUrn = urlSafeBase64Encode(rawUrn);
             console.log(
               "URL-safe Base64 Encoded URN:",
@@ -283,7 +277,6 @@ document
     }
   });
 
-// Execute the Functions
 async function setup() {
   console.log("executing script");
   clientId = document.getElementById("clientId").value;
@@ -315,7 +308,7 @@ async function checkAndDisplayViewer(urlSafeBase64EncodedUrn, accessToken) {
     }
 
     const data = await response.json();
-    console.log("Manifest response:", data); // Log response
+    console.log("Manifest response:", data);
 
     const status = data.status;
     const resultElement = document.getElementById("statusResult");
@@ -329,7 +322,6 @@ async function checkAndDisplayViewer(urlSafeBase64EncodedUrn, accessToken) {
         break;
       case "success":
         resultElement.textContent = "Translation job completed successfully!";
-        // Proceed to load the Forge viewer
         loadForgeViewer(urlSafeBase64EncodedUrn, accessToken);
         break;
       case "failed":
@@ -345,47 +337,6 @@ async function checkAndDisplayViewer(urlSafeBase64EncodedUrn, accessToken) {
     console.error("Error checking translation status:", error);
     document.getElementById("statusResult").textContent =
       "Error checking status.";
-  }
-}
-
-// Function to get the SVF2 file download URL
-async function getSVF2DownloadUrl(urlSafeBase64EncodedUrn, accessToken) {
-  const url = `https://developer.api.autodesk.com/modelderivative/v2/designdata/${urlSafeBase64EncodedUrn}/manifest`;
-
-  try {
-    const response = await fetch(url, {
-      method: "GET",
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-    });
-
-    if (!response.ok) {
-      throw new Error(`Failed to fetch manifest: ${response.statusText}`);
-    }
-
-    const data = await response.json();
-    console.log("Manifest response:", data); // Log response to see it
-
-    if (data.status === "success") {
-      // Find the svf2 file (adjusted method for checking "mime" type)
-      const svf2File = data.derivatives.find(
-        (item) => item.mime === "application/autodesk-svf2"
-      );
-
-      if (svf2File) {
-        // Construct and return the download URL for the SVF2 file
-        const svf2DownloadUrl = `https://developer.api.autodesk.com/viewingservice/v1/viewers/${urlSafeBase64EncodedUrn}/output/${svf2File.guid}.zip`;
-        console.log("SVF2 Download URL:", svf2DownloadUrl); // Log for debugging
-        return svf2DownloadUrl;
-      } else {
-        throw new Error("No SVF2 file found in the manifest.");
-      }
-    } else {
-      throw new Error("Translation job is not yet complete.");
-    }
-  } catch (error) {
-    console.error("Error fetching translated file URL:", error);
   }
 }
 
@@ -418,7 +369,6 @@ function loadForgeViewer(urlSafeBase64EncodedUrn, accessToken) {
 
     console.log("Viewer initialized. Loading model...");
 
-    // Document URN with prefix "urn:"
     const documentId = `urn:${urlSafeBase64EncodedUrn}`;
     Autodesk.Viewing.Document.load(
       documentId,
@@ -448,7 +398,6 @@ function loadForgeViewer(urlSafeBase64EncodedUrn, accessToken) {
   }
 }
 
-// Event Listener for the "Check Status" Button
 document
   .getElementById("checkStatusBtn")
   .addEventListener("click", async () => {
