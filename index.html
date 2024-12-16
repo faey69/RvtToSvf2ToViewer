@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="icon"
+      type="image/x-icon"
+      href="./rvtToSvf2ToViewerFavicon.png"
+    />
+    <title>Demo: RVT to SVF2 then Viewer</title>
+    <link
+      rel="stylesheet"
+      href="https://developer.api.autodesk.com/modelderivative/v2/viewers/7.*/style.min.css"
+      type="text/css"
+    />
+    <script src="https://developer.api.autodesk.com/modelderivative/v2/viewers/7.*/viewer3D.min.js"></script>
+    <style>
+      body {
+        margin: 0;
+      }
+      #forgeViewer {
+        width: 100%;
+        height: 100%;
+        margin: 0;
+        background-color: #f0f8ff;
+      }
+    </style>
+  </head>
+  <body>
+    <p>
+      This is a <b>static webpage</b> demo of using AutoDesk's
+      <mark>Model Derivative API</mark>, converting rvt file to svf2 and then
+      displaying it using Autodesk <mark>Viewer</mark>.
+    </p>
+    <p>
+      Please open the console <b>(CTRL+SHIFT+I)</b> to view various information,
+      such as translation progress, script execution steps, etc.
+    </p>
+    <p>Please input top to bottom as I skipped most of the validation.</p>
+    <p>
+      This script was created by referencing and following the steps in the
+      documentation:
+      <a
+        href="https://aps.autodesk.com/en/docs/model-derivative/v2/tutorials/prep-roominfo4viewer/"
+        >https://aps.autodesk.com/en/docs/model-derivative/v2/tutorials/prep-roominfo4viewer/</a
+      >
+    </p>
+    <p>
+      As for the viewer, this documentation was referenced and followed:
+      <a
+        href="https://aps.autodesk.com/en/docs/viewer/v7/developers_guide/viewer_basics/starting-html/"
+        >https://aps.autodesk.com/en/docs/viewer/v7/developers_guide/viewer_basics/starting-html/</a
+      >
+    </p>
+    <br />
+    <a
+      href="https://aps.autodesk.com/developer/start-now/getaccess#:~:text=Getting%20Client%20ID%20and%20Secret,-Now%20that%20you&text=To%20get%20the%20Client%20ID,Client%20ID%20and%20Client%20Secret."
+      >How to get Client ID and Client Secret?</a
+    ><br />
+    <label for="clientId">Client ID:</label>
+    <input
+      type="text"
+      id="clientId"
+      name="clientId"
+      placeholder="Enter your Client ID"
+      required
+    />
+    <br />
+    <label for="clientSecret">Client Secret:</label>
+    <input
+      type="password"
+      id="clientSecret"
+      name="clientSecret"
+      placeholder="Enter your Client Secret"
+      required
+    /><br /><br />
+    <label for="fileInput">Upload RVT (Revit) File here:</label>
+    <input type="file" id="fileInput" name="fileInput" accept=".rvt" />
+    <br /><br />
+
+    <button id="checkStatusBtn">Check Translation Status</button>
+    <div id="statusResult"></div>
+
+    <!-- Where the model will be rendered -->
+    <div id="forgeViewer" style="width: 100%; height: 600px"></div>
+
+    <script src="./rvtToSvf2.js"></script>
+  </body>
+</html>
