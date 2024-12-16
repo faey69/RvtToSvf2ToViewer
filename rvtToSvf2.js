@@ -1,7 +1,12 @@
 let clientId = "";
 let clientSecret = "";
 let clientAuthKeys = "";
-const bucketKey = "faey_rvt_to_svf2_to_viewer_bucket_key";
+const bucketKey =
+  "faey_rvt_to_svf2_to_viewer_bucket_key_" +
+  Date.now() +
+  "_" +
+  performance.now().toString().replace(".", "");
+console.log(bucketKey);
 let objectKey = "";
 const minutesExpiration = 60; // The expiration time in minutes for the URL
 let urlSafeBase64EncodedUrn;
